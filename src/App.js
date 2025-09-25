@@ -1,6 +1,7 @@
 import './App.css';
 // import Post from './components/Post';
 import PostContainer from './components/PostContainer'
+import PostForm from './components/PostForm'
 
 function App() {
   return (
@@ -9,7 +10,14 @@ function App() {
     //   <Post title="My Second Post" body="Anyone there?!?" />
     //   <Post title="My Third Post" body="It's a little lonely over here" />      
     // </div>
-    <PostContainer> </PostContainer>
+    <main>
+      <section>
+        <PostForm />
+      </section>
+      <section>
+        <PostContainer />
+      </section>
+    </main>
   );
 }
 

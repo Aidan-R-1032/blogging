@@ -1,23 +1,23 @@
 import './App.css';
+import {Routes, Route, Link} from 'react-router-dom'
 // import Post from './components/Post';
-import PostContainer from './components/PostContainer'
-import PostForm from './components/PostForm'
+// import PostContainer from './components/PostContainer'
+// import PostForm from './components/PostForm'
+import Homepage from './components/Homepage';
+import AboutMe from './components/AboutMe';
 
 function App() {
   return (
-    // <div className='post-container'>
-    //   <Post title="My First Post" body="Hello World!" />
-    //   <Post title="My Second Post" body="Anyone there?!?" />
-    //   <Post title="My Third Post" body="It's a little lonely over here" />      
-    // </div>
-    <main>
-      <section>
-        <PostForm />
-      </section>
-      <section>
-        <PostContainer />
-      </section>
-    </main>
+    <div className="App">
+        <nav>
+          <Link to="/" className="nav-item"> Home </Link>
+          <Link to="/about" className="nav-item"> About </Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/about" element={<AboutMe />} />
+        </Routes>
+    </div>
   );
 }
 

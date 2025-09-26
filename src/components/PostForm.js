@@ -8,7 +8,7 @@ const formStyle = {
     'padding' : '0.5rem',
     'color' : 'white',
     'flex' : '1 1 100%',
-    'alignItems' : 'center',
+    'alignItems' : 'stretch',
     'borderRadius' : '25px'
 }
 
@@ -18,8 +18,8 @@ const formStyle = {
 //     'marginRight': "0.25rem" 
 // };
 
-const textareaStyle = {
-    'width': '20rem',
+  const textareaStyle = {
+    'width' : '85%',
     'minHeight': '5rem',
     'borderRadius': '8px',
     'border': '1px solid black',
@@ -30,7 +30,8 @@ const textareaStyle = {
     'backgroundColor' : 'antiquewhite',
     'textAlign' : 'left',
     'wordWrap' : 'break-word',
-    'overflowWrap' : 'anywhere'
+    'overflowWrap' : 'anywhere',
+    'marginTop' : '1rem'
   };
 
   const buttonStyle = {
@@ -50,14 +51,16 @@ const textareaStyle = {
     'marginTop':'0.25rem'
   };
 
-  const fileNameStyle = {
-    'marginLeft' : '30px', 
-    'opacity' : '0.95', 
-    'display' : 'flex'
+  const mediaStyle = {
+    'width' : '85%',
+    'marginTop' : '1rem',
+    'borderRadius' : '25px'
   }
+
 function PostForm() {
     const [text, setText] = useState("");           // used for the textarea data
     const [fileName, setFileName] = useState("");   // used for managing file names
+    const [file, setFile] = useState(null);
     const fileRef = useRef(null);                   // used for managing actual files
     const MAX = 280;
 
@@ -68,8 +71,14 @@ function PostForm() {
     let onFileChange = (e) => {                     // file modification
         try {
             const f = e.target.files && e.target.files[0];
-            if (f) setFileName(f.name);
-            else setFileName("");    
+            if (f) {
+                setFileName(f.name);
+                setFile(f);
+            }
+            else {
+                setFileName("");
+                setFile(null);
+            }    
             console.log("You changed the file!");
         } catch {
             console.log("Umm, there was an error - yikes")
@@ -79,11 +88,12 @@ function PostForm() {
     let handleSubmit = (e) => {
         e.preventDefault();
 
-        if(!text.trim() && !fileName) return;
+        if(!text.trim() && !file) return;
 
         console.log("Post submitted:", {text, fileName});
         setText("");
         setFileName("");
+        setFile(null);
         if (fileRef.current) fileRef.current.value = null;
     }
 
@@ -100,12 +110,22 @@ function PostForm() {
                 />
             </div>
 
+            <div>
+                {file && file.type.startsWith("image/") && (
+                    <img src={URL.createObjectURL(file)} alt="preview" style={mediaStyle} />
+                )}
+
+                {file && file.type.startsWith("video/") && (
+                    <video src={URL.createObjectURL(file)} controls style={mediaStyle} />
+                )}
+            </div>
+
             <div style={toolbarStyle}>
                 <div id="media">
                     <input 
                         ref={fileRef} 
                         type="file" 
-                        accepts="image/*,video/*" 
+                        accept="image/*,video/*" 
                         style={{'display' : 'none'}} 
                         onChange={onFileChange}
                     />
@@ -115,9 +135,6 @@ function PostForm() {
                         style={buttonStyle}>
                              +Media 
                     </button>
-                    <span style={{fileNameStyle}}>
-                        {fileName ? `Selected: ${fileName}` : ""}
-                    </span> 
                 </div>
 
                 <div style={{ fontSize: "0.9rem" }}>

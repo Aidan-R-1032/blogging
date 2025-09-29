@@ -1,15 +1,9 @@
 import Post from './Post'
 // import React, {useState, useEffect } from 'react';
-
-const posts = [
-  { title: 'My First Post', body: 'Hello World!' },
-  { title: 'My Second Post', body: 'Hello World!' },
-  { title: 'My Third Post', body: 'Hello World!' },
-  { title: 'My Fourth Post', body: 'Hello World!' },
-];
+import posts from '../testPosts.json'
 
 
-function PostContainer() {
+function PostContainer({selectedTag}) {
     // const [posts, setPosts] = useState([])
 
     // useEffect(() => {
@@ -18,7 +12,9 @@ function PostContainer() {
     //     .then((data) => setPosts(data));
     // }, []);
 
-    console.log('posts array:', posts);
+    const visible = (!selectedTag || selectedTag === 'all')
+        ? posts 
+        : posts.filter((p) => {return (p.tag === selectedTag)})
 
     return (
     <>
@@ -29,7 +25,6 @@ function PostContainer() {
                 gap: 1rem;
             }
 
-        /* 3 columns on wider screens (desktop/monitor) */
             @media (min-width: 768px) {
                 .post-container {
                     grid-template-columns: repeat(3, 1fr);
@@ -38,7 +33,7 @@ function PostContainer() {
         `}
         </style>
         <div className="post-container">
-            {posts.map((p, index) => (
+            {visible.map((p, index) => (
                 <Post key={index} title={p.title} body={p.body} />
             ))}
         </div>

@@ -1,6 +1,19 @@
 import { useState, useRef } from "react";
+import { useUser } from "./UserContext";
 
-const formStyle = {
+function PostForm() {
+    const [text, setText] = useState("");           // used for the textarea data
+    const [fileName, setFileName] = useState("");   // used for managing file names
+    const [file, setFile] = useState(null);
+    const fileRef = useRef(null);                   // used for managing actual files
+    const MAX = 280;
+
+    const {user} = useUser();
+    if (!user) {
+        return <p style={{ color: "white" }}>You must be logged in to post.</p>;
+    }
+
+    const formStyle = {
     'display': 'flex',
     'flexDirection' : 'column',
     'backgroundColor' : 'lightsalmon',
@@ -10,59 +23,46 @@ const formStyle = {
     'flex' : '1 1 100%',
     'alignItems' : 'stretch',
     'borderRadius' : '25px'
-}
+    }
+    
+    const textareaStyle = {
+        'width' : '85%',
+        'minHeight': '5rem',
+        'borderRadius': '8px',
+        'border': '1px solid black',
+        'padding': '0.25rem',
+        'resize': 'vertical',
+        'boxSizing': 'border-box',
+        'color': 'black',
+        'backgroundColor' : 'antiquewhite',
+        'textAlign' : 'left',
+        'wordWrap' : 'break-word',
+        'overflowWrap' : 'anywhere',
+        'marginTop' : '1rem'
+    };
 
-// const labelStyle = { 
-//     'width': "2.5rem", 
-//     'textAlign': "right", 
-//     'marginRight': "0.25rem" 
-// };
+    const buttonStyle = {
+        'background' : "transparent",
+        'border': "1px solid antiquewhite",
+        'color': "white",
+        'padding': "6px 8px",
+        'borderRadius': "8px",
+        'cursor': "pointer"
+    }
 
-  const textareaStyle = {
-    'width' : '85%',
-    'minHeight': '5rem',
-    'borderRadius': '8px',
-    'border': '1px solid black',
-    'padding': '0.25rem',
-    'resize': 'vertical',
-    'boxSizing': 'border-box',
-    'color': 'black',
-    'backgroundColor' : 'antiquewhite',
-    'textAlign' : 'left',
-    'wordWrap' : 'break-word',
-    'overflowWrap' : 'anywhere',
-    'marginTop' : '1rem'
-  };
+    const toolbarStyle = {
+        'display' : 'flex',
+        'width' : '100%',
+        'justifyContent' : 'space-between',
+        'alignItems': 'center',
+        'marginTop':'0.25rem'
+    };
 
-  const buttonStyle = {
-    'background' : "transparent",
-    'border': "1px solid antiquewhite",
-    'color': "white",
-    'padding': "6px 8px",
-    'borderRadius': "8px",
-    'cursor': "pointer"
-  }
-
-  const toolbarStyle = {
-    'display' : 'flex',
-    'width' : '100%',
-    'justifyContent' : 'space-between',
-    'alignItems': 'center',
-    'marginTop':'0.25rem'
-  };
-
-  const mediaStyle = {
-    'width' : '85%',
-    'marginTop' : '1rem',
-    'borderRadius' : '25px'
-  }
-
-function PostForm() {
-    const [text, setText] = useState("");           // used for the textarea data
-    const [fileName, setFileName] = useState("");   // used for managing file names
-    const [file, setFile] = useState(null);
-    const fileRef = useRef(null);                   // used for managing actual files
-    const MAX = 280;
+    const mediaStyle = {
+        'width' : '85%',
+        'marginTop' : '1rem',
+        'borderRadius' : '25px'
+    }
 
     let openFilePicker = () => {                    // uploads the initial file if a user selects one
         fileRef.current && fileRef.current.click();
@@ -104,7 +104,8 @@ function PostForm() {
             <div>
                 <textarea 
                     id="post-body" 
-                    style={textareaStyle} 
+                    style={textareaStyle}
+                    value={text} 
                     onChange={(e) => {setText(e.target.value)}}
                     required
                 />

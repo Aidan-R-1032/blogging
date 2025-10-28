@@ -4,9 +4,11 @@ import {Routes, Route, Link} from 'react-router-dom'
 import Homepage from './components/Homepage';
 import AboutMe from './components/AboutMe';
 import { UserProvider } from './components/UserContext';
+import { PostsProvider } from './components/PostsContext';
 
 function App() {
   return (
+    <PostsProvider>
     <UserProvider>
       <div className="App">
           <header>
@@ -22,6 +24,7 @@ function App() {
           </Routes>
       </div>
     </UserProvider>
+    </PostsProvider>
   );
 }
 

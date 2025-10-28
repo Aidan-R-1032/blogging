@@ -1,5 +1,6 @@
 import DeleteWarningButton from "./DeleteWarningButton"
 import { useState, useEffect } from "react"
+import { usePosts } from "./PostsContext"
 
 const div_styles = {
     'backgroundColor': 'lightsalmon',
@@ -39,9 +40,15 @@ const deleteTogglerStyle = {
 
 function Post(props){
     const [displayDelete, setDisplayDelete] = useState(false);
+    const { posts, setPosts } = usePosts();
 
     const toggleDelete = () => {
         setDisplayDelete(!displayDelete);
+    }
+
+    const handleDelete = () => {
+        toggleDelete();
+        setPosts(posts.filter(p => p.id !== props.id));
     }
 
     useEffect(() => {   // prevents scrolling
@@ -68,7 +75,7 @@ function Post(props){
                 alertHead={"Are you sure you want to delete this post?"}
                 alertMsg={`Once you delete a post, you will not be able to view it or any comments attactched. 
                     Please make sure you are certain!`}
-                deleteFunc={() => {console.log(`Deleted post titled ${props.title}`)}}
+                deleteFunc={handleDelete}
             />}
             {!displayDelete && <div>
                 <h1 style={h1_styles}> {props.title} </h1>

@@ -1,16 +1,12 @@
 import Post from './Post'
 // import React, {useState, useEffect } from 'react';
-import posts from '../testPosts.json'
+// import posts from '../testPosts.json'
+import { usePosts } from './PostsContext'
 
 
 function PostContainer({selectedTag}) {
-    // const [posts, setPosts] = useState([])
+    const { posts } = usePosts()
 
-    // useEffect(() => {
-    //     fetch('placeholder_url.com')
-    //     .then((response) => response.json())
-    //     .then((data) => setPosts(data));
-    // }, []);
 
     const visible = (!selectedTag || selectedTag === 'all')
         ? posts 
@@ -34,7 +30,7 @@ function PostContainer({selectedTag}) {
         </style>
         <div className="post-container">
             {visible.map((p, index) => (
-                <Post key={index} title={p.title} body={p.body} />
+                <Post key={index} title={p.title} body={p.body} id={p.id}/>
             ))}
         </div>
     </>

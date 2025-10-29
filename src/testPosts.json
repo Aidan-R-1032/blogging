@@ -1,7 +1,7 @@
 [
-    { "title": "My First Post", "body": "I am currently developing this app!", "tag": "dev"},
-    { "title": "My Second Post", "body": "I could go for some McDonald's right about now...", "tag": "food"},
-    { "title": "My Third Post", "body": "It's a beautiful day in Minnesota", "tag": "minnesota" },
-    { "title": "My Fourth Post", "body": "Still on that Front-End Grind!", "tag": "dev" },
-    { "title": "My Fourth Post", "body": "Food is nice", "tag": "food" }
+    {"id" : "1", "title": "My First Post", "body": "I am currently developing this app!", "tag": "dev"},
+    {"id" : "2", "title": "My Second Post", "body": "I could go for some McDonald's right about now...", "tag": "food"},
+    {"id" : "3", "title": "My Third Post", "body": "It's a beautiful day in Minnesota", "tag": "minnesota" },
+    {"id" : "4", "title": "My Fourth Post", "body": "Still on that Front-End Grind!", "tag": "dev" },
+    {"id" : "5", "title": "My Fifth Post", "body": "Food is nice", "tag": "food" }
 ]

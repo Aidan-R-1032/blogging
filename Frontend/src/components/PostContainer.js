@@ -1,7 +1,7 @@
 import Post from './Post'
 // import React, {useState, useEffect } from 'react';
 // import posts from '../testPosts.json'
-import { usePosts } from './PostsContext'
+import { usePosts } from '../contexts/PostsContext'
 
 
 function PostContainer({selectedTag}) {

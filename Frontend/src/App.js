@@ -3,8 +3,8 @@ import {Routes, Route, Link} from 'react-router-dom'
 
 import Homepage from './components/Homepage';
 import AboutMe from './components/AboutMe';
-import { UserProvider } from './components/UserContext';
-import { PostsProvider } from './components/PostsContext';
+import { UserProvider } from './contexts/UserContext';
+import { PostsProvider } from './contexts/PostsContext';
 
 function App() {
   return (

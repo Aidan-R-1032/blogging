@@ -1,6 +1,6 @@
 import DeleteWarningButton from "./DeleteWarningButton"
 import { useState, useEffect } from "react"
-import { usePosts } from "./PostsContext"
+import { usePosts } from "../contexts/PostsContext"
 
 const div_styles = {
     'backgroundColor': 'lightsalmon',

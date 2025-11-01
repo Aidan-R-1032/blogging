@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useUser } from "./UserContext";
+import { useUser } from "../contexts/UserContext";
 
 function PostForm() {
     const [text, setText] = useState("");           // used for the textarea data

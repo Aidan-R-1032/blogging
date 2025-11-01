@@ -71,16 +71,27 @@ function Post(props){
                         X 
                 </button>
             </div>
-            {displayDelete && <DeleteWarningButton 
-                alertHead={"Are you sure you want to delete this post?"}
-                alertMsg={`Once you delete a post, you will not be able to view it or any comments attactched. 
-                    Please make sure you are certain!`}
-                deleteFunc={handleDelete}
-            />}
-            {!displayDelete && <div>
-                <h1 style={h1_styles}> {props.title} </h1>
-                <p style={p_styles}> {props.body} </p>
-            </div>}
+            {displayDelete ? (
+                <DeleteWarningButton 
+                    alertHead={"Are you sure you want to delete this post?"}
+                    alertMsg={`Once you delete a post, you will not be able to view it or any comments attactched. 
+                        Please make sure you are certain!`}
+                    deleteFunc={handleDelete}
+                />
+                ) : (
+                <div>
+                    <p style={p_styles}> {props.body} </p>
+                    {props.media_url && (
+                        <div>
+                            <img
+                                src={props.media_url}
+                                alt="Post media"
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
+
         </div>
     )
 }

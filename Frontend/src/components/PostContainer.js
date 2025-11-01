@@ -30,7 +30,12 @@ function PostContainer({selectedTag}) {
         </style>
         <div className="post-container">
             {visible.map((p, index) => (
-                <Post key={index} title={p.title} body={p.body} id={p.id}/>
+                <Post
+                    key={p.id} 
+                    body={p.body_text} 
+                    media={p.media_url}
+                    date={p.created_at}
+                />
             ))}
         </div>
     </>

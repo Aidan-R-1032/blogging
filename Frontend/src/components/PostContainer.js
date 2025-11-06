@@ -33,7 +33,7 @@ function PostContainer({selectedTag}) {
                 <Post
                     key={p.id} 
                     body={p.body_text} 
-                    media={p.media_url}
+                    media_url={p.media_url}
                     date={p.created_at}
                 />
             ))}

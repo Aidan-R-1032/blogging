@@ -1,25 +1,61 @@
 const express = require('express');
-const mysql = require('mysql2');
 const cors = require('cors');
+const multer = require('multer'); // using multer for now for local storage of media
+const data = require("./data"); 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'localpassword02ZA',
-    database: 'social_app'
+app.use("/uploads", express.static("uploads"));
+
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        const unique = Date.now() + "-" + file.originalname;
+        cb(null, unique);
+    }
+})
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB max
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image and video files are allowed!"));
+    }
+  },
 });
 
-app.get('/posts', (req, res) => {
-    db.query('SELECT * FROM posts', (err, results) => {
-        if (err) {
-            return res.status(500).json({error: err});
+
+
+app.get('/posts', async (req, res) => {
+    let posts = await data.getAllPosts();
+    res.status(200).send(posts);
+});
+
+app.post('/posts/submit_post', upload.single("media_url"), async (req, res) => {
+    try {
+        const { user_id, body_text} = req.body;
+        const media_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+        const post_data = {
+            user_id: user_id,
+            body_text: body_text,
+            media_url: media_url
         }
-        res.json(results);
-    });
+
+        const newPostID = await data.addPost(post_data);
+        const newPost = await data.getPostByID(newPostID.insertId);
+
+        res.status(201).json(newPost);
+    }
+    catch(err) {
+        console.error("Error in /posts/submit_post:", err);
+        res.status(500).json({message: err.message || "Internal Server Error"});
+    }
 });
 
 app.listen(5000, () => console.log('Backend running on port 5000'));

@@ -1,6 +1,9 @@
 # Node.js dependencies
 /node_modules
 
+# uploaded files
+/uploads
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

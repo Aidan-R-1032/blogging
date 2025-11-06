@@ -12,10 +12,6 @@ const div_styles = {
     'borderRadius': '25px',
 }
 
-const h1_styles = {
-    'padding': '0.5rem'
-}
-
 const p_styles = {
     'padding': '0.5rem'
 }
@@ -36,7 +32,11 @@ const deleteTogglerStyle = {
   'margin' : '0.5rem 0.5rem auto 0.3rem'
 };
 
-
+const mediaStyle = {
+    'width' : '85%',
+    'marginTop' : '1rem',
+    'borderRadius' : '25px'
+}
 
 function Post(props){
     const [displayDelete, setDisplayDelete] = useState(false);
@@ -83,10 +83,20 @@ function Post(props){
                     <p style={p_styles}> {props.body} </p>
                     {props.media_url && (
                         <div>
-                            <img
-                                src={props.media_url}
-                                alt="Post media"
-                            />
+                            {props.media_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                <video
+                                    controls
+                                    style={mediaStyle}
+                                >
+                                    <source src={`http://localhost:5000${props.media_url}`} type="video/mp4" />
+                                </video>
+                            ) : (
+                                <img
+                                    src={`http://localhost:5000${props.media_url}`}
+                                    alt="Post media"
+                                    style={mediaStyle}
+                                />
+                            )}
                         </div>
                     )}
                 </div>

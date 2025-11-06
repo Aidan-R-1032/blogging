@@ -1,6 +1,6 @@
 import DeleteWarningButton from "./DeleteWarningButton"
 import { useState, useEffect } from "react"
-import { usePosts } from "./PostsContext"
+import { usePosts } from "../contexts/PostsContext"
 
 const div_styles = {
     'backgroundColor': 'lightsalmon',
@@ -10,10 +10,6 @@ const div_styles = {
     'padding' :'0.25rem',
     'margin': '0.25rem',
     'borderRadius': '25px',
-}
-
-const h1_styles = {
-    'padding': '0.5rem'
 }
 
 const p_styles = {
@@ -36,7 +32,11 @@ const deleteTogglerStyle = {
   'margin' : '0.5rem 0.5rem auto 0.3rem'
 };
 
-
+const mediaStyle = {
+    'width' : '85%',
+    'marginTop' : '1rem',
+    'borderRadius' : '25px'
+}
 
 function Post(props){
     const [displayDelete, setDisplayDelete] = useState(false);
@@ -71,16 +71,37 @@ function Post(props){
                         X 
                 </button>
             </div>
-            {displayDelete && <DeleteWarningButton 
-                alertHead={"Are you sure you want to delete this post?"}
-                alertMsg={`Once you delete a post, you will not be able to view it or any comments attactched. 
-                    Please make sure you are certain!`}
-                deleteFunc={handleDelete}
-            />}
-            {!displayDelete && <div>
-                <h1 style={h1_styles}> {props.title} </h1>
-                <p style={p_styles}> {props.body} </p>
-            </div>}
+            {displayDelete ? (
+                <DeleteWarningButton 
+                    alertHead={"Are you sure you want to delete this post?"}
+                    alertMsg={`Once you delete a post, you will not be able to view it or any comments attactched. 
+                        Please make sure you are certain!`}
+                    deleteFunc={handleDelete}
+                />
+                ) : (
+                <div>
+                    <p style={p_styles}> {props.body} </p>
+                    {props.media_url && (
+                        <div>
+                            {props.media_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                <video
+                                    controls
+                                    style={mediaStyle}
+                                >
+                                    <source src={`http://localhost:5000${props.media_url}`} type="video/mp4" />
+                                </video>
+                            ) : (
+                                <img
+                                    src={`http://localhost:5000${props.media_url}`}
+                                    alt="Post media"
+                                    style={mediaStyle}
+                                />
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
         </div>
     )
 }

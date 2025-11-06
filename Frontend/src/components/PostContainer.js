@@ -1,7 +1,7 @@
 import Post from './Post'
 // import React, {useState, useEffect } from 'react';
 // import posts from '../testPosts.json'
-import { usePosts } from './PostsContext'
+import { usePosts } from '../contexts/PostsContext'
 
 
 function PostContainer({selectedTag}) {
@@ -30,7 +30,12 @@ function PostContainer({selectedTag}) {
         </style>
         <div className="post-container">
             {visible.map((p, index) => (
-                <Post key={index} title={p.title} body={p.body} id={p.id}/>
+                <Post
+                    key={p.id} 
+                    body={p.body_text} 
+                    media_url={p.media_url}
+                    date={p.created_at}
+                />
             ))}
         </div>
     </>

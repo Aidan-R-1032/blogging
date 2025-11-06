@@ -1,7 +1,10 @@
 import { useState, useRef } from "react";
-import { useUser } from "./UserContext";
+import { useUser } from "../contexts/UserContext";
+import { usePosts } from "../contexts/PostsContext";
 
 function PostForm() {
+    const {posts, setPosts} = usePosts();
+
     const [text, setText] = useState("");           // used for the textarea data
     const [fileName, setFileName] = useState("");   // used for managing file names
     const [file, setFile] = useState(null);
@@ -85,16 +88,44 @@ function PostForm() {
         }
     }
 
-    let handleSubmit = (e) => {
+    let handleSubmit = async (e) => {
         e.preventDefault();
 
         if(!text.trim() && !file) return;
 
-        console.log("Post submitted:", {text, fileName});
-        setText("");
-        setFileName("");
-        setFile(null);
-        if (fileRef.current) fileRef.current.value = null;
+        try {
+            const formData = new FormData();
+            formData.append("user_id", user.id);
+            formData.append("body_text", text);
+            if (file) {
+                formData.append("media_url", file);
+            }
+
+            const res = await fetch("http://localhost:5000/posts/submit_post", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to submit post");
+            }
+
+            const newPost = await res.json();
+            const postObj = Array.isArray(newPost) ? newPost[0] : newPost;
+            console.log("Post Obj: ",postObj)
+            setPosts([postObj, ...posts]);
+
+
+            setText("");
+            setFileName("");
+            setFile(null);
+            if (fileRef.current) {
+                fileRef.current.value = null;
+            }
+        }
+        catch (err) {
+            console.error("Post submission failed:", err);
+        }
     }
 
     const canPost = text.trim().length > 0;         // check to see if the user has typed anything at all
@@ -103,7 +134,7 @@ function PostForm() {
         <form style={formStyle} onSubmit={handleSubmit}>
             <div>
                 <textarea 
-                    id="post-body" 
+                    id="postBody" 
                     style={textareaStyle}
                     value={text} 
                     onChange={(e) => {setText(e.target.value)}}
@@ -124,7 +155,8 @@ function PostForm() {
             <div style={toolbarStyle}>
                 <div id="media">
                     <input 
-                        ref={fileRef} 
+                        ref={fileRef}
+                        id="postMedia" 
                         type="file" 
                         accept="image/*,video/*" 
                         style={{'display' : 'none'}} 

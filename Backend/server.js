@@ -58,4 +58,23 @@ app.post('/posts/submit_post', upload.single("media_url"), async (req, res) => {
     }
 });
 
+app.delete('/posts/delete_post', async(req, res) => {
+    try {
+      const {post_id} = req.body;
+      const result = await data.deletePostByID(post_id);
+      
+      if (result.affectedRows > 0) {
+        return res.status(200).json({ message: "Post deleted successfully" });
+      } 
+      else {
+        return res.status(404).json({ message: "Post not found" });
+      }
+    }
+    
+    catch(err) {
+      console.error("Error in /posts/delete_post:", err);
+      res.status(500).json({message: err.message || "Internal Server Error"});
+    }
+})
+
 app.listen(5000, () => console.log('Backend running on port 5000'));

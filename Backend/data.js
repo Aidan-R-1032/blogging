@@ -16,7 +16,7 @@ async function getAllPosts(){
 }
 
 async function getPostByID(id){
-    const [rows] = await connPool.query('SELECT * FROM posts WHERE id=?', id);
+    const [rows] = await connPool.query('SELECT * FROM posts WHERE id=?',[id]);
     return rows[0];
 }
 
@@ -27,8 +27,14 @@ async function addPost(data){
     return res;
 }
 
+async function deletePostByID(id){
+    const [result] = await connPool.query('DELETE FROM posts WHERE id=?', [id]);
+    return result;
+}
+
 module.exports = {
     getAllPosts,
     getPostByID,
-    addPost
+    addPost,
+    deletePostByID
 };

@@ -32,6 +32,7 @@ function PostContainer({selectedTag}) {
             {visible.map((p, index) => (
                 <Post
                     key={p.id} 
+                    id={p.id}
                     body={p.body_text} 
                     media_url={p.media_url}
                     date={p.created_at}

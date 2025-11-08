@@ -46,9 +46,27 @@ function Post(props){
         setDisplayDelete(!displayDelete);
     }
 
-    const handleDelete = () => {
-        toggleDelete();
-        setPosts(posts.filter(p => p.id !== props.id));
+    const handleDelete = async () => {
+        try {
+            console.log("Clicked delete");
+            console.log("Props: ", props);
+            const res = await fetch("http://localhost:5000/posts/delete_post", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({post_id: props.id})
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to delete post with id=",props.id);
+            }
+
+            toggleDelete();
+            console.log("You deleted the post with id: ", props.id);
+            setPosts(posts.filter(p => p.id !== props.id));
+        }
+        catch(err) {
+            console.error("Post deletion falied:", err);
+        }
     }
 
     useEffect(() => {   // prevents scrolling

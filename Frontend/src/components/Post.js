@@ -1,4 +1,5 @@
 import DeleteWarningButton from "./DeleteWarningButton"
+import OptionMenu from "./OptionMenu"
 import { useState, useEffect } from "react"
 import { usePosts } from "../contexts/PostsContext"
 
@@ -80,14 +81,22 @@ function Post(props){
             document.body.style.overflow = "auto";
         };
     }, [displayDelete]);
+
+    const deleteOption = {
+        name: "Delete",
+        action: toggleDelete
+    }
+
+    const options = [deleteOption];
+
+    const resetAllMenuActionStates = () => {
+        setDisplayDelete(false);
+    }
+
     return (
         <div style={div_styles}>
             <div style={{'marginLeft' : 'auto'}}>
-                <button 
-                    onClick={toggleDelete}
-                    style={deleteTogglerStyle}>
-                        X 
-                </button>
+                <OptionMenu menuOptions={options} onOpen={resetAllMenuActionStates}/>
             </div>
             {displayDelete ? (
                 <DeleteWarningButton 

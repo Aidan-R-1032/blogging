@@ -32,9 +32,42 @@ async function deletePostByID(id){
     return result;
 }
 
+async function updatePostById(id, updatedData) {
+    const fields = [];
+    const values = [];
+
+    if (updatedData.body_text !== undefined) {
+        fields.push("body_text = ?");
+        values.push(updatedData.body_text);
+    }
+
+    if (updatedData.media_url !== undefined) {
+        fields.push("media_url = ?");
+        values.push(updatedData.media_url);
+    }
+
+    if (fields.length === 0) {
+        return null;
+    }
+
+    values.push(id);
+
+    const query = `UPDATE posts SET ${fields.join(", ")} WHERE ID = ?`;
+
+    const [result] = await connPool.query(query, values);
+    
+    if (result.affectedRows === 0) {
+        return null
+    }
+
+    const updatedPost = await getPostByID(id);
+    return updatedPost;
+}
+
 module.exports = {
     getAllPosts,
     getPostByID,
     addPost,
-    deletePostByID
+    deletePostByID,
+    updatePostById
 };

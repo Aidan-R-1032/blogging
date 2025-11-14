@@ -77,4 +77,28 @@ app.delete('/posts/delete_post', async(req, res) => {
     }
 })
 
+app.put("/posts/edit_post", upload.single("media_url"), async (req, res) => {
+  try {
+    const {post_id, body_text} = req.body;
+    
+    if (!post_id) {
+      return res.status(400).json({message: "post_id is required "})
+    }
+
+    const media_url = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+    const updatedPost = await data.updatePostById(post_id, {body_text, media_url});
+
+    if (!updatedPost){
+      return res.status(404).json({message: "Post not found or nothing to update"})
+    }
+
+    res.status(200).json(updatedPost);
+  }
+  catch (err) {
+    console.error("Error in /posts/edit_post:", err);
+    res.status(500).json({message: err.message || "Internal Server Error"})
+  }
+})
+
 app.listen(5000, () => console.log('Backend running on port 5000'));

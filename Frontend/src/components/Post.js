@@ -1,4 +1,5 @@
 import DeleteWarningButton from "./DeleteWarningButton"
+import PostForm from "./PostForm"
 import OptionMenu from "./OptionMenu"
 import { useState, useEffect } from "react"
 import { usePosts } from "../contexts/PostsContext"
@@ -17,22 +18,6 @@ const p_styles = {
     'padding': '0.5rem'
 }
 
-const deleteTogglerStyle = {
-  'display' : 'flex',
-  'justifyContent' : 'center',
-  'alignItems' : 'center',
-  'width' : '2rem',              
-  'height' : '2rem',
-  'backgroundColor' : 'lightsalmon',
-  'color' : 'white',
-  'border' : '1px solid white',
-  'borderRadius' : '8px',
-  'cursor' : 'pointer',
-  'fontWeight' : 'bold',
-  'fontSize' : '1rem',
-  'margin' : '0.5rem 0.5rem auto 0.3rem'
-};
-
 const mediaStyle = {
     'width' : '85%',
     'marginTop' : '1rem',
@@ -41,10 +26,16 @@ const mediaStyle = {
 
 function Post(props){
     const [displayDelete, setDisplayDelete] = useState(false);
+    const [displayEdit, setDisplayEdit] = useState(false);
+    
     const { posts, setPosts } = usePosts();
 
     const toggleDelete = () => {
         setDisplayDelete(!displayDelete);
+    }
+
+    const toggleEdit = () => {
+        setDisplayEdit(!displayEdit);
     }
 
     const handleDelete = async () => {
@@ -70,8 +61,31 @@ function Post(props){
         }
     }
 
+    const handleEditSumbit = async (updatedData) => {
+        try {
+            const res = await fetch("http://localhost:5000/posts/edit_post", {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    post_id: props.id,
+                    ...updatedData
+                })
+            });
+
+            if (!res.ok){
+                throw new Error("Failed to update post")
+            }
+            const updatedPost = await res.json();
+            setPosts(posts.map(p => (p.id === props.id ? updatedPost : p)));
+            setDisplayEdit(false);
+        }
+        catch(err) {
+            console.error("Failed to update post:", err);
+        }
+    }
+
     useEffect(() => {   // prevents scrolling
-        if(displayDelete) {
+        if(displayDelete || displayEdit) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -80,17 +94,23 @@ function Post(props){
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, [displayDelete]);
+    }, [displayDelete, displayEdit]);
 
     const deleteOption = {
         name: "Delete",
         action: toggleDelete
     }
 
-    const options = [deleteOption];
+    const editOption = {
+        name: "Edit",
+        action: toggleEdit
+    }
+
+    const options = [deleteOption, editOption];
 
     const resetAllMenuActionStates = () => {
         setDisplayDelete(false);
+        setDisplayEdit(false);
     }
 
     return (
@@ -105,6 +125,15 @@ function Post(props){
                         Please make sure you are certain!`}
                     deleteFunc={handleDelete}
                 />
+                ) : displayEdit ? (
+                    <PostForm 
+                        editing={true}
+                        initialBody={props.body}
+                        initialMedia={props.media_url}
+                        postId={props.id}
+                        onSubmit={handleEditSumbit}
+                        onCancel={() => setDisplayEdit(false)}
+                    />
                 ) : (
                 <div>
                     <p style={p_styles}> {props.body} </p>

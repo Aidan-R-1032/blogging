@@ -2,12 +2,13 @@ import { useState, useRef } from "react";
 import { useUser } from "../contexts/UserContext";
 import { usePosts } from "../contexts/PostsContext";
 
-function PostForm() {
+function PostForm({editing, initialBody ="", initialMedia = null, postId, onSubmit, onCancel}) {
     const {posts, setPosts} = usePosts();
 
-    const [text, setText] = useState("");           // used for the textarea data
+    const [text, setText] = useState(initialBody);           // used for the textarea data
     const [fileName, setFileName] = useState("");   // used for managing file names
     const [file, setFile] = useState(null);
+    const [existingMedia, setExistingMedia] = useState(initialMedia);
     const fileRef = useRef(null);                   // used for managing actual files
     const MAX = 280;
 
@@ -93,6 +94,28 @@ function PostForm() {
 
         if(!text.trim() && !file) return;
 
+        if(editing){
+            const formData = new FormData();
+            formData.append("post_id", postId);
+            formData.append("body_text", text);
+            if (file) formData.append("media_url", file);
+
+            const res = await fetch("http://localhost:5000/posts/edit_post", {
+                method: "PUT",
+                body: formData,
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to update post");
+            }
+
+            const updatedPost = await res.json();
+            setPosts(posts.map(p => (p.id === postId ? updatedPost : p)));
+            
+            onCancel();
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append("user_id", user.id);
@@ -142,15 +165,33 @@ function PostForm() {
                 />
             </div>
 
-            <div>
-                {file && file.type.startsWith("image/") && (
-                    <img src={URL.createObjectURL(file)} alt="preview" style={mediaStyle} />
-                )}
+            {/* Existing media (edit mode) */}
+            {editing && existingMedia && !file && typeof existingMedia === "string" && (
+                <>
+                    {existingMedia.match(/\.(mp4|webm|ogg)$/i) ? (
+                        <video 
+                            src={`http://localhost:5000${existingMedia}`} 
+                            controls 
+                            style={mediaStyle}
+                        />
+                    ) : (
+                        <img 
+                            src={`http://localhost:5000${existingMedia}`} 
+                            alt="existing media" 
+                            style={mediaStyle}
+                        />
+                    )}
+                </>
+            )}
 
-                {file && file.type.startsWith("video/") && (
-                    <video src={URL.createObjectURL(file)} controls style={mediaStyle} />
-                )}
-            </div>
+            {file instanceof File && file.type.startsWith("image/") && (
+                <img src={URL.createObjectURL(file)} alt="preview" style={mediaStyle} />
+            )}
+
+            {file instanceof File && file.type.startsWith("video/") && (
+                <video src={URL.createObjectURL(file)} controls style={mediaStyle} />
+            )}
+
 
             <div style={toolbarStyle}>
                 <div id="media">
@@ -177,6 +218,16 @@ function PostForm() {
                 <button type="submit" style={buttonStyle} disabled={!canPost}>
                     Post
                 </button>
+
+                {editing && <button 
+                                onClick={onCancel} 
+                                style={{
+                                    ...buttonStyle,
+                                    backgroundColor: "red"
+                                }}
+                > 
+                    Cancel Editing 
+                </button>}
             </div>
         </form>
     )

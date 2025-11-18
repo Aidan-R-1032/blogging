@@ -26,7 +26,6 @@ const mediaStyle = {
 
 function Post(props){
     const [displayDelete, setDisplayDelete] = useState(false);
-    const [displayEdit, setDisplayEdit] = useState(false);
     
     const { posts, setPosts } = usePosts();
 
@@ -35,7 +34,12 @@ function Post(props){
     }
 
     const toggleEdit = () => {
-        setDisplayEdit(!displayEdit);
+        if (props.activeEditID === props.id) {
+            props.setActiveEditID(null);
+        }
+        else {
+            props.setActiveEditID(props.id);
+        }
     }
 
     const handleDelete = async () => {
@@ -76,8 +80,8 @@ function Post(props){
                 throw new Error("Failed to update post")
             }
             const updatedPost = await res.json();
+            props.setActiveEditID(null);
             setPosts(posts.map(p => (p.id === props.id ? updatedPost : p)));
-            setDisplayEdit(false);
         }
         catch(err) {
             console.error("Failed to update post:", err);
@@ -85,7 +89,7 @@ function Post(props){
     }
 
     useEffect(() => {   // prevents scrolling
-        if(displayDelete || displayEdit) {
+        if(displayDelete) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -94,7 +98,7 @@ function Post(props){
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, [displayDelete, displayEdit]);
+    }, [displayDelete,]);
 
     const deleteOption = {
         name: "Delete",
@@ -110,7 +114,7 @@ function Post(props){
 
     const resetAllMenuActionStates = () => {
         setDisplayDelete(false);
-        setDisplayEdit(false);
+        props.setActiveEditID(null);
     }
 
     return (
@@ -125,14 +129,14 @@ function Post(props){
                         Please make sure you are certain!`}
                     deleteFunc={handleDelete}
                 />
-                ) : displayEdit ? (
+                ) : (props.activeEditID === props.id) ? (
                     <PostForm 
                         editing={true}
                         initialBody={props.body}
                         initialMedia={props.media_url}
                         postId={props.id}
                         onSubmit={handleEditSumbit}
-                        onCancel={() => setDisplayEdit(false)}
+                        onCancel={() => props.setActiveEditID(null)}
                     />
                 ) : (
                 <div>

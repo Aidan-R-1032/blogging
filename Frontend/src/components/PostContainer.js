@@ -2,11 +2,12 @@ import Post from './Post'
 // import React, {useState, useEffect } from 'react';
 // import posts from '../testPosts.json'
 import { usePosts } from '../contexts/PostsContext'
+import { useState } from 'react'
 
 
 function PostContainer({selectedTag}) {
     const { posts } = usePosts()
-
+    const [activeEditID, setActiveEditID] = useState(null);
 
     const visible = (!selectedTag || selectedTag === 'all')
         ? posts 
@@ -36,6 +37,8 @@ function PostContainer({selectedTag}) {
                     body={p.body_text} 
                     media_url={p.media_url}
                     date={p.created_at}
+                    activeEditID={activeEditID}
+                    setActiveEditID={setActiveEditID}
                 />
             ))}
         </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const buttonStyles = {
     'display' : 'flex',
@@ -18,6 +18,8 @@ const buttonStyles = {
 
 function OptionMenu({menuOptions, onOpen}) {
     const [display, setDisplay] = useState(false);
+    const menuRef = useRef(null);
+
 
     const toggleDisplay = () => {
         const opening = !display;
@@ -27,6 +29,21 @@ function OptionMenu({menuOptions, onOpen}) {
             onOpen();
         }
     };
+
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setDisplay(false);
+            }
+        }
+
+        if (display) {
+            window.addEventListener("mousedown", handleClickOutside);
+        }
+        else {
+            window.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [display]);
 
     return (
         <div style={
@@ -42,6 +59,7 @@ function OptionMenu({menuOptions, onOpen}) {
                 ... 
             </button>
             {display && <div
+                ref={menuRef}
                 style={{
                     position: "absolute",
                     top: "2.5rem",
